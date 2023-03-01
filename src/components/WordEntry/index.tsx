@@ -1,8 +1,9 @@
-import {useState} from "react"
+import {useRef, useState} from "react"
 import styled from "styled-components";
 
 interface WordEntryProps {
-    onGuessEntered: (guess: string) => void
+    onGuessEntered(guess: string): void
+    onGuessComplete(): void
 }
 
 export const StyledWordEntry = styled.input`
@@ -18,8 +19,24 @@ export const StyledWordEntry = styled.input`
   }
 `
 
-export default function WordEntry({onGuessEntered}: WordEntryProps) {
+export const StyledEvaluateButton = styled.button`
+    width: 72px;
+    height: 36px;
+    background: #CC4433;
+    color: white;
+    border-radius: 5px;
+    position: relative;
+    top: 10px;
+`
+
+export const StyledEntryContainer = styled.div`
+   display: flex;
+    align-content: baseline;
+`
+
+export default function WordEntry({onGuessEntered, onGuessComplete}: WordEntryProps) {
     const [value, setValue] = useState('')
+    const wordEntryRef = useRef<HTMLInputElement>(null)
     function getValidWordleString(rawString: string) {
         const validWordleString = rawString.replace(/[^a-z]/gi, '')
         return validWordleString?.toUpperCase()
@@ -31,12 +48,26 @@ export default function WordEntry({onGuessEntered}: WordEntryProps) {
         setValue(validString)
     }
 
+    const handleGuessComplete = () => {
+        setValue('')
+        wordEntryRef?.current?.focus()
+        onGuessComplete()
+    }
+
     return (
-        <StyledWordEntry autoFocus
-         placeholder='Enter your guess'
-         value={value}
-         maxLength={5}
-         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLetterEntry(e)}
-         />
+      <StyledEntryContainer>
+          <StyledWordEntry autoFocus
+                           placeholder='Enter your guess'
+                           value={value}
+                           maxLength={5}
+                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLetterEntry(e)}
+                           ref={wordEntryRef}
+          />
+          { value.length !== 5 ? '' :
+          <StyledEvaluateButton onClick={handleGuessComplete}>
+              Guess
+          </StyledEvaluateButton>}
+      </StyledEntryContainer>
+
     )
 }
