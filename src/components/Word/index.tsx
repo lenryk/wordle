@@ -21,7 +21,7 @@ export default function Word({isWordEvaluated, guessWordValue}: WordProps) {
     const [evaluatedResults, setEvaluatedResults] = useState<AccuracyEnum[]>(initialAccuracyArray)
 
     useEffect(() => {
-        setGuessValue(guessWordValue)
+        setGuessValue(guessWordValue.padEnd(5,'_'))
     }, [guessWordValue])
 
     useEffect(() => {

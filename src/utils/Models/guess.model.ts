@@ -1,4 +1,4 @@
-export interface IGuess {
+export interface Guess {
   guessedWord: string,
   evaluated: boolean
 }
